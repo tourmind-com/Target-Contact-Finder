@@ -1,0 +1,114 @@
+{
+  "skill_name": "crm-customer-import",
+  "evals": [
+    {
+      "id": 1,
+      "name": "basic-search-japan",
+      "prompt": "帮我找一批日本地区的客户",
+      "expected_output": "调用 search_customer_profile 搜索日本地区客户，展示客户列表，询问是否录入",
+      "assertions": [
+        {
+          "type": "tool_called",
+          "tool": "search_customer_profile",
+          "params_contain": "日本"
+        },
+        {
+          "type": "response_contains",
+          "text": "是否"
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "search-with-criteria",
+      "prompt": "我想找年采购额超过100万的东南亚酒店客户，大概10个",
+      "expected_output": "调用 search_customer_profile 搜索东南亚酒店客户，limit=10，展示列表",
+      "assertions": [
+        {
+          "type": "tool_called",
+          "tool": "search_customer_profile"
+        },
+        {
+          "type": "response_contains",
+          "text": "酒店"
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "confirm-import",
+      "prompt": "好的，把这些客户都录入CRM",
+      "expected_output": "调用 batch_import_customer 批量导入，返回成功/失败数量",
+      "assertions": [
+        {
+          "type": "tool_called",
+          "tool": "batch_import_customer"
+        },
+        {
+          "type": "response_contains",
+          "text": "成功"
+        }
+      ],
+      "files": [],
+      "context": "上一轮已调用 search_customer_profile 返回了客户列表"
+    },
+    {
+      "id": 4,
+      "name": "implicit-search",
+      "prompt": "有没有做旅游业务的潜在客户",
+      "expected_output": "识别为搜索客户画像的意图，调用 search_customer_profile",
+      "assertions": [
+        {
+          "type": "tool_called",
+          "tool": "search_customer_profile",
+          "params_contain": "旅游"
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "import-confirmation-yes",
+      "prompt": "是的，导入",
+      "expected_output": "理解为确认导入，调用 batch_import_customer",
+      "assertions": [
+        {
+          "type": "tool_called",
+          "tool": "batch_import_customer"
+        }
+      ],
+      "files": [],
+      "context": "上一轮展示了搜索结果并询问是否录入"
+    },
+    {
+      "id": 6,
+      "name": "search-europe-business",
+      "prompt": "找欧洲的商务旅行公司客户",
+      "expected_output": "调用 search_customer_profile 搜索欧洲商务旅行公司",
+      "assertions": [
+        {
+          "type": "tool_called",
+          "tool": "search_customer_profile",
+          "params_contain": "欧洲"
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 7,
+      "name": "negative-not-import",
+      "prompt": "不用了，先不录入",
+      "expected_output": "理解为拒绝导入，不调用 batch_import_customer",
+      "assertions": [
+        {
+          "type": "tool_not_called",
+          "tool": "batch_import_customer"
+        }
+      ],
+      "files": [],
+      "context": "上一轮展示了搜索结果并询问是否录入"
+    }
+  ]
+}
